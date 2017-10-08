@@ -1,0 +1,6 @@
+Ga0164295_10000291	Bacteria;
+Ga0164295_10000292	Bacteria;Proteobacteria;Betaproteobacteria;Burkholderiales;Comamonadaceae;
+Ga0164295_10000293	Bacteria;Actinobacteria;Actinobacteria;
+Ga0164295_10000294	NO CLASSIFICATION LP
+Ga0164295_10000295	Bacteria;Bacteroidetes;Flavobacteriia;
+Ga0164295_10000296	Bacteria;Proteobacteria;Alphaproteobacteria;Caulobacterales;Caulobacteraceae;
