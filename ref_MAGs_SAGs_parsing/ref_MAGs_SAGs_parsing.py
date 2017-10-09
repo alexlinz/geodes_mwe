@@ -22,7 +22,8 @@ import sys
 ### Define input files
 ################################################################################
 
-genome = sys.argv[1]    
+#genome = sys.argv[1]    
+genome = '2582580615'
 taxonFile = 'Readme.csv'
 inputGff = genome + '.gff'
 outputGff = genome + '_parsed.gff'
@@ -37,6 +38,7 @@ outputTable = genome + '_table.txt'
 
 taxonFile = "Readme.csv"
 readme = pandas.read_csv(taxonFile)
+readme = readme.fillna(value='')
 readme["TaxString"] = readme['Phylum'] + ';' + readme['Class'] + ';' + readme['Order'] + ';' + readme['Lineage'] + ';' + readme['Clade'] + ';' + readme['Tribe']
 readme['IMG OID'] = readme['IMG OID'].apply(str)
 taxonDict = readme.set_index('IMG OID').to_dict()['TaxString']
@@ -57,10 +59,11 @@ for record in GFF.parse(inFile):
         else:
             product = 'None given'
         del seq.qualifiers['locus_tag']
-    GFF.write([record], outFile1)
-taxonomy = taxonDict[genome] * len(seq.id)
 
-outFile2.writelines(map("{},{},{}\n".format, seq.id, str(taxonomy), product))        
+        taxonomy = taxonDict[genome]
+        outFile2.write(seq.id+'\t'+str(taxonomy)+'\t'+product+'\n')       
+    GFF.write([record], outFile1)
         
 inFile.close()
 outFile1.close()
+outFile2.close()
