@@ -1,0 +1,22 @@
+mkdir python
+tar -xvf Python-2.7.13.tgz
+cd Python-2.7.13
+./configure --prefix=$(pwd)/../python
+make
+make install
+cd ..
+ls python
+ls python/bin
+
+export PATH=$(pwd)/python/bin:$PATH
+wget https://bootstrap.pypa.io/get-pip.py
+python get-pip.py
+pip install numpy
+pip install matplotlib
+pip install pysam
+pip install pandas
+pip install bcbio-gff
+easy_install -f http://biopython.org/DIST/ biopython
+
+tar -czvf python.tar.gz python/
+exit
