@@ -1,5 +1,5 @@
 ###############################################################################
-# CodeTitle.py
+# ref_algae_parsing.py
 # Copyright (c) 2017, Joshua J Hamilton and Alex Linz
 # Affiliation: Department of Bacteriology
 #              University of Wisconsin-Madison, Madison, Wisconsin, USA
@@ -22,15 +22,15 @@ import sys
 ### Define input files
 ################################################################################
 
-# genome = sys.argv[1]
+#genome = sys.argv[1]
 genome = "GCF_000149405.2_ASM14940v2_genomic"
 taxonFile = 'algae_phylogeny.txt'
 inputGff = genome + '.gff'
-outputGff = genome + 'parsed.gff'
-outputTable = genome + 'table.txt'
+outputGff = genome + '.parsed.gff'
+outputTable = genome + '.table.txt'
 
 #%%#############################################################################
-### Update the inputGff file. Replace ID with 'locus tag' field
+### Update the inputGff file. Replace ID with ID + species name (otherwise genes are just numbered and you can't tell which genome they came from)
 ### Make a separate table with taxonomy and product name info
 ################################################################################
 
@@ -39,6 +39,8 @@ outputTable = genome + 'table.txt'
 readme = pandas.read_table(taxonFile, names = ["Genome", "Taxonomy"])
 taxonDict = readme.set_index('Genome').to_dict()['Taxonomy']
 taxonomy  = taxonDict[genome]
+species = taxonomy.split(",")[-1:]
+species = ''.join(species)
 
 # Read in the GFF file
 # Extract product information
@@ -48,14 +50,15 @@ inFile = open(inputGff, 'r')
 outFile1 = open(outputGff, 'w')
 outFile2 = open(outputTable, 'w')
 
-for record in GFF.parse(inFile, target_lines = 10):
+limit_info = dict(gff_type = ["CDS"],)
+for record in GFF.parse(inFile, limit_info = limit_info):
     for seq in record.features:
-        seq.qualifiers['ID'][0] = seq.qualifiers['locus_tag'][0]
+	seq.id = seq.id + "_" + species
+	seq.qualifiers['ID'][0] = seq.id
         if 'product' in seq.qualifiers.keys():
           product = seq.qualifiers['product'][0]
         else:
           product = 'None given'
-        print seq.id+'\t'+genome+'\t'+str(taxonomy)+'\t'+product+'\n'
         outFile2.write(seq.id+'\t'+genome+'\t'+str(taxonomy)+'\t'+product+'\n')
     GFF.write([record], outFile1)
 
